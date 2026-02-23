@@ -5,18 +5,38 @@
   <meta name="google-site-verification" content="ZDuX6n53z-b0CNore2BfwfzdWiWxY0N2KtSSyiGul7k" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đếm ngược Kỳ thi vào 10</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%233b82f6;stop-opacity:1' /><stop offset='100%' style='stop-color:%238b5cf6;stop-opacity:1' /></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23grad)'/><text x='50' y='70' font-size='60' font-weight='bold' text-anchor='middle' fill='white' font-family='Arial'>📚</text></svg>">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="/_sdk/element_sdk.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&amp;family=Be+Vietnam+Pro:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
   <style>
-    .font-orbitron { font-family: 'Orbitron', monospace; }
-    .font-vietnam { font-family: 'Be Vietnam Pro', sans-serif; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    .font-orbitron {
+      font-family: 'Orbitron', sans-serif;
+    }
+    
+    .font-vietnam {
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
     
     @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.2); }
-      50% { box-shadow: 0 0 30px rgba(139, 92, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.3); }
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.3),
+                    0 0 40px rgba(59, 130, 246, 0.2),
+                    inset 0 0 20px rgba(255, 255, 255, 0.05);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(139, 92, 246, 0.5),
+                    0 0 60px rgba(59, 130, 246, 0.3),
+                    inset 0 0 30px rgba(255, 255, 255, 0.1);
+      }
     }
     
     @keyframes float {
@@ -29,7 +49,39 @@
       100% { background-position: 200% center; }
     }
     
-    .time-card {
+    @keyframes rotate-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes slide-in {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes slide-out {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+    }
+    
+    @keyframes breathing {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    .countdown-box {
       animation: pulse-glow 3s ease-in-out infinite;
     }
     
@@ -37,195 +89,580 @@
       animation: float 4s ease-in-out infinite;
     }
     
-    .title-shimmer {
-      background: linear-gradient(90deg, #fff 0%, #c4b5fd 25%, #fff 50%, #93c5fd 75%, #fff 100%);
+    .shimmer-text {
+      background: linear-gradient(90deg, #fff 0%, #a5b4fc 25%, #fff 50%, #c4b5fd 75%, #fff 100%);
       background-size: 200% auto;
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: shimmer 4s linear infinite;
+      animation: shimmer 3s linear infinite;
+    }
+    
+    .rotating-border::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      background: conic-gradient(from 0deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+      border-radius: 24px;
+      animation: rotate-slow 4s linear infinite;
+      z-index: -1;
+    }
+    
+    .rotating-border::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 20px;
+      z-index: -1;
     }
     
     .glass-effect {
-      background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      -webkit-backdrop-filter: blur(10px);
     }
     
-    .number-shadow {
-      text-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 4px 20px rgba(0, 0, 0, 0.3);
+    .number-display {
+      text-shadow: 0 0 20px rgba(139, 92, 246, 0.8),
+                   0 0 40px rgba(59, 130, 246, 0.6);
     }
     
-    @keyframes rotate-slow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    @keyframes tick {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
     
-    .rotate-bg {
-      animation: rotate-slow 20s linear infinite;
+    .tick-animation {
+      animation: tick 1s ease-in-out;
+    }
+    
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    
+    .tool-menu.slide-in {
+      animation: slide-in 0.3s ease-out;
+    }
+    
+    .tool-menu.slide-out {
+      animation: slide-out 0.3s ease-out;
+    }
+    
+    .tool-btn {
+      transition: all 0.3s ease;
+    }
+    
+    .tool-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+    
+    .tool-btn.active {
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(74, 222, 128, 0.7));
+    }
+    
+    .breathing-dot {
+      animation: breathing 2s ease-in-out infinite;
+    }
+    
+    .pomodoro-timer {
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+    
+    .modal-backdrop {
+      animation: fade-in 0.3s ease;
+    }
+    
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full font-vietnam">
-  <div id="app-wrapper" class="h-full w-full overflow-auto relative">
-   <!-- Animated Background -->
-   <div class="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-violet-700"></div><!-- Decorative Elements -->
-   <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-10 left-10 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl rotate-bg"></div>
-    <div class="absolute bottom-10 right-10 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl rotate-bg" style="animation-direction: reverse;"></div>
+  <main class="app-wrapper h-full w-full overflow-auto" style="background: linear-gradient(135deg, #1e3a8a 0%, #5b21b6 50%, #7c3aed 100%);"><!-- Tool Menu Toggle Button --> <button id="tool-menu-btn" class="fixed top-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 shadow-lg hover:shadow-xl transition-all flex items-center justify-center text-white font-bold text-xl hover:scale-110" title="Mở menu công cụ"> 🎯 </button><!-- Tool Menu -->
+   <div id="tool-menu" class="fixed top-20 right-6 z-40 w-80 bg-slate-900/95 glass-effect rounded-2xl shadow-2xl border border-white/20 p-6 hidden tool-menu">
+    <h3 class="text-white font-bold text-xl mb-4">Công cụ học tập</h3>
+    <div class="space-y-3">
+     <!-- Lo-Fi Music Button --> <button class="tool-btn w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold flex items-center gap-3 hover:shadow-lg" onclick="toggleLoFi()"> <span id="lofi-icon">🎵</span>
+      <div class="text-left flex-1">
+       <div>
+        Lo-Fi Music
+       </div>
+       <div id="lofi-status" class="text-xs text-blue-200">
+        Bật nhạc nền
+       </div>
+      </div></button><!-- Pomodoro Button --> <button class="tool-btn w-full py-3 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold flex items-center gap-3 hover:shadow-lg" onclick="openPomodoro()"> <span>⏱️</span>
+      <div class="text-left flex-1">
+       <div>
+        Pomodoro
+       </div>
+       <div class="text-xs text-orange-200">
+        25 phút tập trung
+       </div>
+      </div></button><!-- Meditation Button --> <button class="tool-btn w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold flex items-center gap-3 hover:shadow-lg" onclick="openMeditation()"> <span id="meditation-icon">🧘</span>
+      <div class="text-left flex-1">
+       <div>
+        Thiền
+       </div>
+       <div class="text-xs text-emerald-200">
+        5 phút thở nhẹ
+       </div>
+      </div></button>
+    </div>
+   </div><!-- Decorative Elements -->
+   <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-500/10 rounded-full blur-3xl"></div>
-   </div><!-- Floating Particles -->
-   <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-20 left-[20%] w-2 h-2 bg-white/30 rounded-full float-animation"></div>
-    <div class="absolute top-40 right-[25%] w-3 h-3 bg-white/20 rounded-full float-animation" style="animation-delay: 1s;"></div>
-    <div class="absolute bottom-32 left-[30%] w-2 h-2 bg-white/25 rounded-full float-animation" style="animation-delay: 2s;"></div>
-    <div class="absolute top-[60%] right-[15%] w-4 h-4 bg-white/15 rounded-full float-animation" style="animation-delay: 0.5s;"></div>
    </div><!-- Main Content -->
-   <main class="relative z-10 h-full flex flex-col items-center justify-center px-4 py-8">
-    <!-- Title Section -->
-    <div class="text-center mb-8 md:mb-12">
-     <div class="inline-block mb-4">
-      <svg class="w-16 h-16 md:w-20 md:h-20 mx-auto text-white/80 float-animation" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-       <path d="M12 8v4l3 3" stroke-linecap="round" stroke-linejoin="round" /> <circle cx="12" cy="12" r="9" /> <path d="M12 3v2M12 19v2M3 12h2M19 12h2" stroke-linecap="round" />
+   <div class="relative z-10 min-h-full flex flex-col items-center justify-center px-4 py-8"><!-- Icon -->
+    <div class="mb-6 float-animation">
+     <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center shadow-2xl">
+      <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
       </svg>
      </div>
-     <h1 id="main-title" class="text-3xl md:text-5xl lg:text-6xl font-extrabold title-shimmer mb-3">Kỳ thi vào 10 năm 2026</h1>
-     <p id="subtitle" class="text-white/70 text-lg md:text-xl font-medium">Hãy chuẩn bị thật tốt cho ngày quan trọng!</p>
-    </div><!-- Countdown Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8 max-w-4xl w-full mb-8 md:mb-12">
-     <!-- Days -->
-     <div class="time-card glass-effect rounded-2xl md:rounded-3xl p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300">
-      <div class="relative">
-       <span id="days" class="font-orbitron text-5xl md:text-6xl lg:text-7xl font-black text-white number-shadow block"> 000 </span>
-       <div class="absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-pulse"></div>
+    </div><!-- Title -->
+    <h1 id="main-title" class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center mb-3 shimmer-text tracking-tight">Kỳ thi vào 10 năm 2026</h1><!-- Subtitle -->
+    <p id="subtitle" class="text-blue-200/80 text-lg sm:text-xl mb-10 text-center font-medium">Hành trình chinh phục ước mơ</p><!-- Countdown Container -->
+    <div class="w-full max-w-4xl">
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"><!-- Days -->
+      <div class="countdown-box relative rotating-border rounded-3xl p-1">
+       <div class="bg-slate-900/90 glass-effect rounded-2xl p-4 sm:p-6 text-center">
+        <div id="days" class="font-orbitron text-5xl sm:text-6xl md:text-7xl font-black text-white number-display mb-2">
+         000
+        </div>
+        <div class="text-blue-300 text-sm sm:text-base font-semibold uppercase tracking-widest">
+         Ngày
+        </div>
+       </div>
+      </div><!-- Hours -->
+      <div class="countdown-box relative rotating-border rounded-3xl p-1" style="animation-delay: 0.5s;">
+       <div class="bg-slate-900/90 glass-effect rounded-2xl p-4 sm:p-6 text-center">
+        <div id="hours" class="font-orbitron text-5xl sm:text-6xl md:text-7xl font-black text-white number-display mb-2">
+         00
+        </div>
+        <div class="text-purple-300 text-sm sm:text-base font-semibold uppercase tracking-widest">
+         Giờ
+        </div>
+       </div>
+      </div><!-- Minutes -->
+      <div class="countdown-box relative rotating-border rounded-3xl p-1" style="animation-delay: 1s;">
+       <div class="bg-slate-900/90 glass-effect rounded-2xl p-4 sm:p-6 text-center">
+        <div id="minutes" class="font-orbitron text-5xl sm:text-6xl md:text-7xl font-black text-white number-display mb-2">
+         00
+        </div>
+        <div class="text-pink-300 text-sm sm:text-base font-semibold uppercase tracking-widest">
+         Phút
+        </div>
+       </div>
+      </div><!-- Seconds -->
+      <div class="countdown-box relative rotating-border rounded-3xl p-1" style="animation-delay: 1.5s;">
+       <div class="bg-slate-900/90 glass-effect rounded-2xl p-4 sm:p-6 text-center">
+        <div id="seconds" class="font-orbitron text-5xl sm:text-6xl md:text-7xl font-black text-white number-display mb-2">
+         00
+        </div>
+        <div class="text-indigo-300 text-sm sm:text-base font-semibold uppercase tracking-widest">
+         Giây
+        </div>
+       </div>
       </div>
-      <p class="text-white/80 text-sm md:text-base font-semibold mt-2 uppercase tracking-wider">Ngày</p>
-     </div><!-- Hours -->
-     <div class="time-card glass-effect rounded-2xl md:rounded-3xl p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300" style="animation-delay: 0.2s;">
-      <div class="relative">
-       <span id="hours" class="font-orbitron text-5xl md:text-6xl lg:text-7xl font-black text-white number-shadow block"> 00 </span>
-       <div class="absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full animate-pulse" style="animation-delay: 0.3s;"></div>
+     </div><!-- Target Date Display -->
+     <div class="mt-8 text-center">
+      <div class="inline-flex items-center gap-3 bg-white/10 glass-effect rounded-full px-6 py-3 border border-white/20">
+       <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+       </svg><span class="text-white font-semibold text-lg">11 Tháng 6, 2026</span>
       </div>
-      <p class="text-white/80 text-sm md:text-base font-semibold mt-2 uppercase tracking-wider">Giờ</p>
-     </div><!-- Minutes -->
-     <div class="time-card glass-effect rounded-2xl md:rounded-3xl p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300" style="animation-delay: 0.4s;">
-      <div class="relative">
-       <span id="minutes" class="font-orbitron text-5xl md:text-6xl lg:text-7xl font-black text-white number-shadow block"> 00 </span>
-       <div class="absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full animate-pulse" style="animation-delay: 0.6s;"></div>
-      </div>
-      <p class="text-white/80 text-sm md:text-base font-semibold mt-2 uppercase tracking-wider">Phút</p>
-     </div><!-- Seconds -->
-     <div class="time-card glass-effect rounded-2xl md:rounded-3xl p-4 md:p-6 text-center transform hover:scale-105 transition-transform duration-300" style="animation-delay: 0.6s;">
-      <div class="relative">
-       <span id="seconds" class="font-orbitron text-5xl md:text-6xl lg:text-7xl font-black text-white number-shadow block"> 00 </span>
-       <div class="absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full animate-pulse" style="animation-delay: 0.9s;"></div>
-      </div>
-      <p class="text-white/80 text-sm md:text-base font-semibold mt-2 uppercase tracking-wider">Giây</p>
+     </div><!-- Motivational Quote -->
+     <div class="mt-8 text-center">
+      <p class="text-white/60 text-sm sm:text-base italic max-w-md mx-auto">"Mỗi ngày trôi qua là một bước tiến gần hơn đến thành công. Hãy cố gắng hết mình!"</p>
      </div>
-    </div><!-- Target Date Display -->
-    <div class="glass-effect rounded-full px-6 py-3 md:px-8 md:py-4">
-     <p class="text-white/90 text-sm md:text-base font-semibold flex items-center gap-2">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-       <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /> <line x1="16" y1="2" x2="16" y2="6" /> <line x1="8" y1="2" x2="8" y2="6" /> <line x1="3" y1="10" x2="21" y2="10" />
-      </svg><span>Ngày thi: <strong class="text-white">11 - 12/05/2026</strong></span></p>
-    </div><!-- Motivational Message -->
-    <div id="message" class="mt-8 text-center">
-     <p class="text-white/60 text-sm md:text-base italic">"Mỗi ngày đều là cơ hội để bạn tiến gần hơn đến ước mơ!"</p>
+    </div><!-- Progress indicator -->
+    <div class="mt-10 w-full max-w-md">
+     <div class="flex justify-between text-white/60 text-xs mb-2"><span>Bắt đầu</span> <span id="progress-text">0% hoàn thành</span> <span>Kỳ thi</span>
+     </div>
+     <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+      <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full transition-all duration-1000" style="width: 0%"></div>
+     </div>
     </div>
-   </main>
+   </div>
+  </main><!-- Pomodoro Modal -->
+  <div id="pomodoro-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 modal-backdrop" onclick="closePomodoro(event)">
+   <div class="bg-slate-900/95 glass-effect rounded-3xl p-8 w-96 border border-white/20 shadow-2xl" onclick="event.stopPropagation()">
+    <h2 class="text-2xl font-bold text-white mb-6 text-center">Pomodoro Timer</h2>
+    <div class="pomodoro-timer bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-2xl p-8 mb-6 text-center border border-orange-400/30">
+     <div class="font-orbitron text-6xl font-black text-orange-300 mb-2">
+      <span id="pomodoro-minutes">25</span>:<span id="pomodoro-seconds">00</span>
+     </div>
+     <div class="text-orange-200 text-sm">
+      Thời gian tập trung
+     </div>
+    </div>
+    <div class="flex gap-3 mb-4">
+     <button onclick="startPomodoro()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition"> ▶ Bắt đầu </button> <button onclick="pausePomodoro()" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition"> ⏸ Tạm dừng </button> <button onclick="resetPomodoro()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition"> 🔄 Reset </button>
+    </div><button onclick="closePomodoro()" class="w-full bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg transition"> Đóng </button>
+   </div>
+  </div><!-- Meditation Modal -->
+  <div id="meditation-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 modal-backdrop" onclick="closeMeditation(event)">
+   <div class="bg-slate-900/95 glass-effect rounded-3xl p-8 w-96 border border-white/20 shadow-2xl" onclick="event.stopPropagation()">
+    <h2 class="text-2xl font-bold text-white mb-6 text-center">Thiền Tập</h2>
+    <div class="bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-2xl p-8 mb-6 text-center border border-emerald-400/30">
+     <div class="breathing-dot w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-teal-400 mx-auto mb-4"></div>
+     <div id="meditation-text" class="text-emerald-200 text-lg font-semibold">
+      Thở vào...
+     </div>
+     <div id="meditation-timer" class="font-orbitron text-4xl font-bold text-emerald-300 mt-4">
+      5:00
+     </div>
+    </div>
+    <div class="flex gap-3 mb-4">
+     <button onclick="startMeditation()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition"> ▶ Bắt đầu </button> <button onclick="pauseMeditation()" class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition"> ⏸ Tạm dừng </button>
+    </div><button onclick="closeMeditation()" class="w-full bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg transition"> Đóng </button>
+   </div>
   </div>
   <script>
+    // Tool Menu Toggle
+    let isMenuOpen = false;
+    document.getElementById('tool-menu-btn').addEventListener('click', () => {
+      const menu = document.getElementById('tool-menu');
+      const btn = document.getElementById('tool-menu-btn');
+      isMenuOpen = !isMenuOpen;
+      
+      if (isMenuOpen) {
+        menu.classList.remove('hidden');
+        menu.classList.add('slide-in');
+      } else {
+        menu.classList.add('slide-out');
+        setTimeout(() => {
+          menu.classList.add('hidden');
+          menu.classList.remove('slide-out');
+        }, 300);
+      }
+    });
+
+    // Close menu when clicking elsewhere
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('tool-menu');
+      const btn = document.getElementById('tool-menu-btn');
+      if (isMenuOpen && !menu.contains(e.target) && !btn.contains(e.target)) {
+        isMenuOpen = false;
+        menu.classList.add('slide-out');
+        setTimeout(() => {
+          menu.classList.add('hidden');
+          menu.classList.remove('slide-out');
+        }, 300);
+      }
+    });
+
+    // Lo-Fi Music State
+    let lofiActive = false;
+    const lofiOscillators = [];
+    
+    function toggleLoFi() {
+      lofiActive = !lofiActive;
+      const btn = document.querySelector('[onclick="toggleLoFi()"]');
+      const icon = document.getElementById('lofi-icon');
+      const status = document.getElementById('lofi-status');
+      
+      if (lofiActive) {
+        btn.classList.add('active');
+        icon.textContent = '🎵 ▶';
+        status.textContent = 'Đang phát nhạc Lo-Fi...';
+        createLoFiSound();
+      } else {
+        btn.classList.remove('active');
+        icon.textContent = '🎵';
+        status.textContent = 'Bật nhạc nền';
+        stopLoFiSound();
+      }
+    }
+    
+    function createLoFiSound() {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Create a simple Lo-Fi like ambient sound using sine waves
+      const time = audioContext.currentTime;
+      
+      // Bass notes
+      const bassOsc = audioContext.createOscillator();
+      const bassGain = audioContext.createGain();
+      bassOsc.frequency.value = 55;
+      bassGain.gain.setValueAtTime(0.1, time);
+      bassOsc.connect(bassGain);
+      bassGain.connect(audioContext.destination);
+      bassOsc.start(time);
+      lofiOscillators.push({ osc: bassOsc, gain: bassGain });
+      
+      // Mid notes for melody
+      const midOsc = audioContext.createOscillator();
+      const midGain = audioContext.createGain();
+      midOsc.type = 'triangle';
+      midOsc.frequency.setValueAtTime(220, time);
+      midOsc.frequency.setValueAtTime(246.94, time + 1);
+      midOsc.frequency.setValueAtTime(220, time + 2);
+      midGain.gain.setValueAtTime(0.05, time);
+      midOsc.connect(midGain);
+      midGain.connect(audioContext.destination);
+      midOsc.start(time);
+      midOsc.stop(time + 3);
+      
+      // Add some noise for ambient feel
+      const bufferSize = 2 * audioContext.sampleRate;
+      const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      
+      const noiseSource = audioContext.createBufferSource();
+      noiseSource.buffer = noiseBuffer;
+      const noiseGain = audioContext.createGain();
+      noiseGain.gain.setValueAtTime(0.02, time);
+      noiseSource.connect(noiseGain);
+      noiseGain.connect(audioContext.destination);
+      noiseSource.loop = true;
+      noiseSource.start(time);
+      lofiOscillators.push({ source: noiseSource, gain: noiseGain });
+    }
+    
+    function stopLoFiSound() {
+      lofiOscillators.forEach(osc => {
+        if (osc.osc) osc.osc.stop();
+        if (osc.source) osc.source.stop();
+      });
+      lofiOscillators.length = 0;
+    }
+
+    // Pomodoro Timer State
+    let pomodoroInterval = null;
+    let pomodoroTime = 25 * 60; // 25 minutes in seconds
+    let pomodoroRunning = false;
+
+    function openPomodoro() {
+      document.getElementById('pomodoro-modal').classList.remove('hidden');
+      isMenuOpen = false;
+      document.getElementById('tool-menu').classList.add('hidden');
+    }
+
+    function closePomodoro(e) {
+      if (e && e.target.id !== 'pomodoro-modal') return;
+      document.getElementById('pomodoro-modal').classList.add('hidden');
+      pausePomodoro();
+    }
+
+    function startPomodoro() {
+      if (pomodoroRunning) return;
+      pomodoroRunning = true;
+      
+      pomodoroInterval = setInterval(() => {
+        pomodoroTime--;
+        updatePomodoroDisplay();
+        
+        if (pomodoroTime <= 0) {
+          pomodoroRunning = false;
+          clearInterval(pomodoroInterval);
+          alert('✨ Thời gian Pomodoro kết thúc! Hãy nghỉ ngơi một chút.');
+          resetPomodoro();
+        }
+      }, 1000);
+    }
+
+    function pausePomodoro() {
+      pomodoroRunning = false;
+      if (pomodoroInterval) clearInterval(pomodoroInterval);
+    }
+
+    function resetPomodoro() {
+      pausePomodoro();
+      pomodoroTime = 25 * 60;
+      updatePomodoroDisplay();
+    }
+
+    function updatePomodoroDisplay() {
+      const minutes = Math.floor(pomodoroTime / 60);
+      const seconds = pomodoroTime % 60;
+      document.getElementById('pomodoro-minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('pomodoro-seconds').textContent = String(seconds).padStart(2, '0');
+    }
+
+    // Meditation Timer State
+    let meditationInterval = null;
+    let meditationTime = 5 * 60; // 5 minutes in seconds
+    let meditationRunning = false;
+    let meditationCycle = 0;
+
+    function openMeditation() {
+      document.getElementById('meditation-modal').classList.remove('hidden');
+      isMenuOpen = false;
+      document.getElementById('tool-menu').classList.add('hidden');
+      resetMeditation();
+    }
+
+    function closeMeditation(e) {
+      if (e && e.target.id !== 'meditation-modal') return;
+      document.getElementById('meditation-modal').classList.add('hidden');
+      pauseMeditation();
+    }
+
+    function startMeditation() {
+      if (meditationRunning) return;
+      meditationRunning = true;
+      meditationCycle = 0;
+      
+      meditationInterval = setInterval(() => {
+        meditationTime--;
+        updateMeditationDisplay();
+        
+        // Cycle through breathing instructions
+        const cycle = Math.floor((5 * 60 - meditationTime) / 4) % 4;
+        const instructions = ['Thở vào...', 'Giữ...', 'Thở ra...', 'Giữ...'];
+        document.getElementById('meditation-text').textContent = instructions[cycle];
+        
+        if (meditationTime <= 0) {
+          meditationRunning = false;
+          clearInterval(meditationInterval);
+          alert('🧘 Phiên thiền kết thúc! Bạn đã đạt được sự bình tĩnh.');
+          resetMeditation();
+        }
+      }, 1000);
+    }
+
+    function pauseMeditation() {
+      meditationRunning = false;
+      if (meditationInterval) clearInterval(meditationInterval);
+    }
+
+    function resetMeditation() {
+      pauseMeditation();
+      meditationTime = 5 * 60;
+      updateMeditationDisplay();
+      document.getElementById('meditation-text').textContent = 'Thở vào...';
+    }
+
+    function updateMeditationDisplay() {
+      const minutes = Math.floor(meditationTime / 60);
+      const seconds = meditationTime % 60;
+      document.getElementById('meditation-timer').textContent = 
+        String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+    }
+
     const defaultConfig = {
       main_title: 'Kỳ thi vào 10 năm 2026',
-      subtitle: 'Hãy chuẩn bị thật tốt cho ngày quan trọng!',
-      background_start: '#2563eb',
-      background_end: '#7c3aed',
+      subtitle: 'Hành trình chinh phục ước mơ',
+      primary_color: '#3b82f6',
+      secondary_color: '#8b5cf6',
+      accent_color: '#ec4899',
       text_color: '#ffffff',
-      accent_color: '#c4b5fd',
-      font_family: 'Be Vietnam Pro'
+      background_color: '#1e3a8a',
+      font_family: 'Be Vietnam Pro',
+      font_size: 16
     };
 
     const targetDate = new Date('2026-06-11T00:00:00').getTime();
-
+    const startDate = new Date().getTime();
+    
     function updateCountdown() {
       const now = new Date().getTime();
       const distance = targetDate - now;
-
+      
       if (distance < 0) {
-        document.getElementById('days').textContent = '00';
+        document.getElementById('days').textContent = '000';
         document.getElementById('hours').textContent = '00';
         document.getElementById('minutes').textContent = '00';
         document.getElementById('seconds').textContent = '00';
-        document.getElementById('message').innerHTML = '<p class="text-yellow-300 text-lg font-bold animate-pulse">🎉 Kỳ thi đã bắt đầu! Chúc bạn thi tốt! 🎉</p>';
         return;
       }
-
+      
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      document.getElementById('days').textContent = String(days).padStart(3, '0');
-      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+      
+      const daysEl = document.getElementById('days');
+      const hoursEl = document.getElementById('hours');
+      const minutesEl = document.getElementById('minutes');
+      const secondsEl = document.getElementById('seconds');
+      
+      const newDays = String(days).padStart(3, '0');
+      const newHours = String(hours).padStart(2, '0');
+      const newMinutes = String(minutes).padStart(2, '0');
+      const newSeconds = String(seconds).padStart(2, '0');
+      
+      if (daysEl.textContent !== newDays) {
+        daysEl.textContent = newDays;
+        daysEl.classList.add('tick-animation');
+        setTimeout(() => daysEl.classList.remove('tick-animation'), 1000);
+      }
+      if (hoursEl.textContent !== newHours) {
+        hoursEl.textContent = newHours;
+        hoursEl.classList.add('tick-animation');
+        setTimeout(() => hoursEl.classList.remove('tick-animation'), 1000);
+      }
+      if (minutesEl.textContent !== newMinutes) {
+        minutesEl.textContent = newMinutes;
+        minutesEl.classList.add('tick-animation');
+        setTimeout(() => minutesEl.classList.remove('tick-animation'), 1000);
+      }
+      if (secondsEl.textContent !== newSeconds) {
+        secondsEl.textContent = newSeconds;
+        secondsEl.classList.add('tick-animation');
+        setTimeout(() => secondsEl.classList.remove('tick-animation'), 1000);
+      }
+      
+      // Update progress bar
+      const totalDuration = targetDate - new Date('2024-01-01').getTime();
+      const elapsed = now - new Date('2024-01-01').getTime();
+      const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+      
+      document.getElementById('progress-bar').style.width = progress + '%';
+      document.getElementById('progress-text').textContent = Math.round(progress) + '% hoàn thành';
     }
+    
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
 
     async function onConfigChange(config) {
       const title = config.main_title || defaultConfig.main_title;
       const subtitle = config.subtitle || defaultConfig.subtitle;
-      const bgStart = config.background_start || defaultConfig.background_start;
-      const bgEnd = config.background_end || defaultConfig.background_end;
-      const textColor = config.text_color || defaultConfig.text_color;
-      const accentColor = config.accent_color || defaultConfig.accent_color;
       const fontFamily = config.font_family || defaultConfig.font_family;
-
+      const fontSize = config.font_size || defaultConfig.font_size;
+      
       document.getElementById('main-title').textContent = title;
       document.getElementById('subtitle').textContent = subtitle;
-
-      const wrapper = document.getElementById('app-wrapper');
-      const bgDiv = wrapper.querySelector('div');
-      bgDiv.style.background = `linear-gradient(to bottom right, ${bgStart}, ${bgEnd})`;
-
-      document.querySelectorAll('.time-card span, h1').forEach(el => {
-        el.style.color = textColor;
-      });
-
-      document.querySelectorAll('p, .text-white\\/80, .text-white\\/70').forEach(el => {
-        el.style.color = accentColor;
-      });
-
-      document.body.style.fontFamily = `${fontFamily}, sans-serif`;
+      
+      document.body.style.fontFamily = `${fontFamily}, 'Be Vietnam Pro', sans-serif`;
+      
+      const scale = fontSize / 16;
+      document.getElementById('main-title').style.fontSize = `${3 * scale}rem`;
+      document.getElementById('subtitle').style.fontSize = `${1.25 * scale}rem`;
     }
 
     function mapToCapabilities(config) {
       return {
-        recolorables: [
-          {
-            get: () => config.background_start || defaultConfig.background_start,
-            set: (value) => { config.background_start = value; window.elementSdk.setConfig({ background_start: value }); }
-          },
-          {
-            get: () => config.background_end || defaultConfig.background_end,
-            set: (value) => { config.background_end = value; window.elementSdk.setConfig({ background_end: value }); }
-          },
-          {
-            get: () => config.text_color || defaultConfig.text_color,
-            set: (value) => { config.text_color = value; window.elementSdk.setConfig({ text_color: value }); }
-          },
-          {
-            get: () => config.accent_color || defaultConfig.accent_color,
-            set: (value) => { config.accent_color = value; window.elementSdk.setConfig({ accent_color: value }); }
-          }
-        ],
+        recolorables: [],
         borderables: [],
         fontEditable: {
           get: () => config.font_family || defaultConfig.font_family,
-          set: (value) => { config.font_family = value; window.elementSdk.setConfig({ font_family: value }); }
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
         },
-        fontSizeable: undefined
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
       };
     }
 
@@ -236,7 +673,6 @@
       ]);
     }
 
-    // Initialize
     if (window.elementSdk) {
       window.elementSdk.init({
         defaultConfig,
@@ -245,9 +681,6 @@
         mapToEditPanelValues
       });
     }
-
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d23cb3502b59337',t:'MTc3MTgxODk5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d23f07d76809337',t:'MTc3MTgyMDUxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
