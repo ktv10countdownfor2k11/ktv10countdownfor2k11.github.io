@@ -546,8 +546,8 @@
     }
 
     const defaultConfig = {
-      main_title: 'Kỳ thi vào 10 năm 2026',
-      subtitle: 'Hành trình chinh phục ước mơ',
+      main_title: 'Đếm ngược Kỳ thi vào 10 năm 2026',
+      subtitle: '📍 Hà Nội',
       primary_color: '#3b82f6',
       secondary_color: '#8b5cf6',
       accent_color: '#ec4899',
@@ -557,7 +557,7 @@
       font_size: 16
     };
 
-    const targetDate = new Date('2026-06-30T00:00:00').getTime();
+    const targetDate = new Date('2026-05-30T00:00:00').getTime();
     const startDate = new Date().getTime();
     
     function updateCountdown() {
@@ -609,8 +609,8 @@
       }
       
       // Update progress bar
-      const totalDuration = targetDate - new Date('2024-01-01').getTime();
-      const elapsed = now - new Date('2024-01-01').getTime();
+      const totalDuration = targetDate - new Date('2025-08-25').getTime();
+      const elapsed = now - new Date('2025-08-25').getTime();
       const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
       
       document.getElementById('progress-bar').style.width = progress + '%';
