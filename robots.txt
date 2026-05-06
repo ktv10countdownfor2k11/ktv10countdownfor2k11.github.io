@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ktv10countdownfor2k11.github.io/sitemap.xml
+Sitemap: https://demnguocktv10.github.io/sitemap.xml
